@@ -1,0 +1,11 @@
+subscriber_type,trip_date,day_trip_count
+Subscriber,2017-08-29,1820
+Subscriber,2015-09-01,891
+Subscriber,2016-08-30,853
+Subscriber,2014-09-02,847
+Customer,2017-08-29,221
+Subscriber,2013-09-03,159
+Customer,2013-09-03,117
+Customer,2014-09-02,49
+Customer,2015-09-01,39
+Customer,2016-08-30,26

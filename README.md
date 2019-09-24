@@ -46,10 +46,45 @@ Paste your SQL query and answer the question in a sentence.
 
 - What's the size of this dataset? (i.e., how many trips)
 
+
+Answer: The size of this dataset is 983648
+
+Query: 
+
+```sql
+#standardSQL
+SELECT count(*) FROM `bigquery-public-data.san_francisco.bikeshare_trips`
+```
+
 - What is the earliest start time and latest end time for a trip?
 
-- How many bikes are there?
+Answer: 
+The earlist start time is 2013-08-29 09:08:00
+The latest end time is 2016-08-31 23:48:00
 
+Query:
+
+```sql
+#standardSQL
+SELECT min(start_date) 
+FROM `bigquery-public-data.san_francisco.bikeshare_trips`
+```
+
+```sql
+#standardSQL
+SELECT max(end_date) 
+FROM `bigquery-public-data.san_francisco.bikeshare_trips`
+```
+
+- How many bikes are there?
+Answer: There are 700 bikes
+Query:
+
+```sql
+#standardSQL
+SELECT count(distinct bike_number)
+FROM `bigquery-public-data.san_francisco.bikeshare_trips`
+```
 
 ### Questions of your own
 - Make up 3 questions and answer them using the Bay Area Bike Share Trips Data.
@@ -101,53 +136,198 @@ Paste your SQL query and answer the question in a sentence.
 
 - What's the size of this dataset? (i.e., how many trips)
 
+```
+bq query --use_legacy_sql=false 'SELECT count(*) FROM `bigquery-public-data.san_francisco.bikeshare_trips`'
+Waiting on bqjob_r5e02d03a9aa1ca0_0000016d61358563_1 ... (0s) Current status: DONE   
++--------+
+|  f0_   |
++--------+
+| 983648 |
++--------+
+```
+
+
+
 - What is the earliest start time and latest end time for a trip?
 
+```
+bq query --use_legacy_sql=false 'SELECT min(start_date) FROM `bigquery-public-data.san_francisco.bikeshare_trips`'
+Waiting on bqjob_r5458cf33dc3f6cec_0000016d6137446c_1 ... (4s) Current status: DONE   
++---------------------+
+|         f0_         |
++---------------------+
+| 2013-08-29 09:08:00 |
++---------------------+
+```
+
+```
+bq query --use_legacy_sql=false 'SELECT max(end_date) FROM `bigquery-public-data.san_francisco.bikeshare_trips`'
+Waiting on bqjob_r5f150eb9b9d3b965_0000016d6139c7d7_1 ... (0s) Current status: DONE   
++---------------------+
+|         f0_         |
++---------------------+
+| 2016-08-31 23:48:00 |
++---------------------+
+```
+
 - How many bikes are there?
+
+```
+bq query --use_legacy_sql=false 'SELECT count(distinct bike_number) FROM `bigquery-public-data.san_francisco.bikeshare_trips`'
+Waiting on bqjob_r36dc0f773e296b4a_0000016d613bc3fb_1 ... (0s) Current status: DONE   
++-----+
+| f0_ |
++-----+
+| 700 |
++-----+
+```
+
 
 2. New Query (Paste your SQL query and answer the question in a sentence):
 
 - How many trips are in the morning vs in the afternoon?
 
+Answer: There were 171k morning trips and 272k afternoon trips in 2018
+Assumption: Morning trips start before 12. Afternoon trips start after 12. We do not worry about end times in this case. 
+
+```
+bq query -q  --use_legacy_sql=FALSE 'select  Extract(year from start_date) as trip_year, count(*) as am_trip_count from `bigquery-public-data.san_francisco_bikeshare.bikeshare_trips` where  ( Extract(hour from start_date) < 12 ) group by trip_year order by trip_year desc'
++-----------+---------------+
+| trip_year | am_trip_count |
++-----------+---------------+
+|      2018 |        171144 |
+|      2017 |        195925 |
+|      2016 |         91774 |
+|      2015 |        149812 |
+|      2014 |        133514 |
+|      2013 |         37239 |
++-----------+---------------+
+```
+```
+bq query -q  --use_legacy_sql=FALSE 'select  Extract(year from start_date) as trip_year, count(*) as pm_trip_count from `bigquery-public-data.san_francisco_bikeshare.bikeshare_trips` where  ( Extract(hour from start_date) >= 12 ) group by trip_year order by trip_year desc'
++-----------+---------------+
+| trip_year | pm_trip_count |
++-----------+---------------+
+|      2018 |        272927 |
+|      2017 |        323775 |
+|      2016 |        118720 |
+|      2015 |        196440 |
+|      2014 |        192825 |
+|      2013 |         63324 |
++-----------+---------------+
+
+```
 
 ### Project Questions
 Identify the main questions you'll need to answer to make recommendations (list
 below, add as many questions as you need).
 
-- Question 1: 
+- Question 1: How many peak hour trips were made on any random day by subscribers each year?
 
-- Question 2: 
+- Question 2:  How many peak hour trips were made on any random day by customers each year?
 
-- Question 3: 
+- Question 3: How many bike trips are used for business (weekdays)?
 
-- ...
+- Question 4: How many bike trips are used for leisure (weekends)? 
 
-- Question n: 
+- Question 5: How many males are riding the bikes? 
+
+- Question 6: How many females are riding the bikes?
+
+- Question 7: What is the rate of growth of subscribers year over year?
+
+- Question 8: What is the rate of growth of customers year over year?
+
+- Question 9: What is the rate of growth of male riders?
+
+- Question 10: What is the rate of growth of female riders?
+
 
 ### Answers
 
-Answer at least 4 of the questions you identified above You can use either
+Answer at least 4 of the questions you identified above. You can use either
 BigQuery or the bq command line tool.  Paste your questions, queries and
 answers below.
 
-- Question 1: 
-  * Answer:
+- Question 1: How many peak hour trips were made on any random day by subscribers each year?
+
+  * Answer: There were 1820, 853, 891, 847 and 159 subscriber trips in 2017, 2016, 2015, 2014, 2013 respectively based on the arbitrary week # 35, Wednesday of the week between 6-10 AM and 3-6 PM. Week 35 was picked because it gives the results for the maximum number of years based on the min and max dates.   
+  
+  * SQL query:
+```  
+bq query -q --format=csv --use_legacy_sql=FALSE 'select subscriber_type, Extract(year from start_date) as trip_year, count(*) as subscriber_trip_count from `bigquery-public-data.san_francisco_bikeshare.bikeshare_trips` where  (subscriber_type = "Subscriber" and (Extract(week from start_date) = 35 and Extract(dayofweek from start_date) = 3) ) and ( (Extract(hour from start_date) > 6 and Extract(hour from start_date) < 10) or (Extract(hour from start_date) > 15 and Extract(hour from start_date) < 19)) group by subscriber_type, trip_year order by trip_year desc'
++-----------------+-----------+-----------------------+
+| subscriber_type | trip_year | subscriber_trip_count |
++-----------------+-----------+-----------------------+
+| Subscriber      |      2017 |                  1820 |
+| Subscriber      |      2016 |                   853 |
+| Subscriber      |      2015 |                   891 |
+| Subscriber      |      2014 |                   847 |
+| Subscriber      |      2013 |                   159 |
++-----------------+-----------+-----------------------+
+```
+
+
+
+
+- Question 2: How many peak hour trips were made on any random day by customers each year?
+
+      * Answer: There were 221,26,39,49 and 117 customer trips in 2017, 2016, 2015, 2014, 2013 respectively based on the arbitrary week # 35, Wednesday of the week between 6-10 AM and 3-6 PM. Again, Week 35 was picked because it gives the results for the maximum number of years based on the min and max dates.   
+      
   * SQL query:
 
-- Question 2:
-  * Answer:
-  * SQL query:
+```
+bq query -q --format=csv --use_legacy_sql=FALSE 'select subscriber_type, Extract(year from start_date) as trip_year, count(*) as customer_trip_count from `bigquery-public-data.san_francisco_bikeshare.bikeshare_trips` where  (subscriber_type = "Customer" and (Extract(week from start_date) = 35 and Extract(dayofweek from start_date) = 3) ) and ( (Extract(hour from start_date) > 6 and Extract(hour from start_date) < 10) or (Extract(hour from start_date) > 15 and Extract(hour from start_date) < 19)) group by subscriber_type, trip_year order by trip_year desc'
++-----------------+-----------+---------------------+
+| subscriber_type | trip_year | customer_trip_count |
++-----------------+-----------+---------------------+
+| Customer        |      2017 |                 221 |
+| Customer        |      2016 |                  26 |
+| Customer        |      2015 |                  39 |
+| Customer        |      2014 |                  49 |
+| Customer        |      2013 |                 117 |
++-----------------+-----------+---------------------+
+```
 
-- Question 3:
-  * Answer:
+- Question 3: What are the total number of trips made during the weekend each year?
+
+  * Answer: Total number of weekend trips each year is 77k, 96k, 19k, 34k, 40k and 17k in 2018, 2017, 2016, 2015, 2014, 2013 respectively
+  
   * SQL query:
+  
+```
+bq query -q  --use_legacy_sql=FALSE 'select EXTRACT(YEAR FROM start_date) as year, count(*) as weekend_trips  from `bigquery-public-data.san_francisco_bikeshare.bikeshare_trips` where Extract(DAYOFWEEK FROM start_date) = 1 or Extract(DAYOFWEEK FROM start_date) = 7 group by year order by year desc'
++------+---------------+
+| year | weekend_trips |
++------+---------------+
+| 2018 |         77602 |
+| 2017 |         96265 |
+| 2016 |         19359 |
+| 2015 |         34209 |
+| 2014 |         40309 |
+| 2013 |         17777 |
++------+---------------+
+```
 
 - ...
 
-- Question n:
-  * Answer:
-  * SQL query:
+- Question 4: What are the total number of trips made during the weekday each year?
 
+  * Answer:Total number of weekend trips each year is 366k, 423k, 191k, 312k, 286k and 82k in 2018, 2017, 2016, 2015, 2014, 2013 respectively
+  * SQL query:
+```
+bq query -q  --use_legacy_sql=FALSE 'select EXTRACT(YEAR FROM start_date) as year, count(*) as weekday_trips  from `bigquery-public-data.san_francisco_bikeshare.bikeshare_trips` where Extract(DAYOFWEEK FROM start_date) != 1 and Extract(DAYOFWEEK FROM start_date) != 7 group by year order by year desc'
++------+---------------+
+| year | weekday_trips |
++------+---------------+
+| 2018 |        366469 |
+| 2017 |        423435 |
+| 2016 |        191135 |
+| 2015 |        312043 |
+| 2014 |        286030 |
+| 2013 |         82786 |
++------+---------------+
+```
 
 ---
 
