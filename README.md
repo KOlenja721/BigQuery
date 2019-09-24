@@ -97,7 +97,7 @@ FROM `bigquery-public-data.san_francisco.bikeshare_trips`
   
   * SQL query: 
   
-```
+```sql
 select subscriber_type, Extract(year from start_date) as trip_year, count(*) as subscriber_trip_count from `bigquery-public-data.san_francisco_bikeshare.bikeshare_trips` where  (subscriber_type = "Subscriber" and (Extract(week from start_date) = 35 and Extract(dayofweek from start_date) = 3) ) and ( (Extract(hour from start_date) > 6 and Extract(hour from start_date) < 10) or (Extract(hour from start_date) > 15 and Extract(hour from start_date) < 19)) group by subscriber_type, trip_year order by trip_year desc
 ```
 
@@ -107,7 +107,7 @@ select subscriber_type, Extract(year from start_date) as trip_year, count(*) as 
       
   * SQL query:
 
-```
+```sql
 select subscriber_type, Extract(year from start_date) as trip_year, count(*) as customer_trip_count 
 from `bigquery-public-data.san_francisco_bikeshare.bikeshare_trips` 
 where  (subscriber_type = "Customer" and (Extract(week from start_date) = 35 
@@ -124,7 +124,7 @@ group by subscriber_type, trip_year order by trip_year desc
   
   * SQL query:
   
-```
+```sql
 select EXTRACT(YEAR FROM start_date) as year, count(*) as weekend_trips  
 from `bigquery-public-data.san_francisco_bikeshare.bikeshare_trips` 
 where Extract(DAYOFWEEK FROM start_date) = 1 or Extract(DAYOFWEEK FROM start_date) = 7 
