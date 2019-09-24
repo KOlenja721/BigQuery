@@ -96,6 +96,7 @@ FROM `bigquery-public-data.san_francisco.bikeshare_trips`
   * Answer: There were 1820, 853, 891, 847 and 159 subscriber trips in 2017, 2016, 2015, 2014, 2013 respectively based on the arbitrary week # 35, Wednesday of the week between 6-10 AM and 3-6 PM. Week 35 was picked because it gives the results for the maximum number of years based on the min and max dates.   
   
   * SQL query: 
+  
 ```
 select subscriber_type, Extract(year from start_date) as trip_year, count(*) as subscriber_trip_count from `bigquery-public-data.san_francisco_bikeshare.bikeshare_trips` where  (subscriber_type = "Subscriber" and (Extract(week from start_date) = 35 and Extract(dayofweek from start_date) = 3) ) and ( (Extract(hour from start_date) > 6 and Extract(hour from start_date) < 10) or (Extract(hour from start_date) > 15 and Extract(hour from start_date) < 19)) group by subscriber_type, trip_year order by trip_year desc
 ```
@@ -107,7 +108,13 @@ select subscriber_type, Extract(year from start_date) as trip_year, count(*) as 
   * SQL query:
 
 ```
-select subscriber_type, Extract(year from start_date) as trip_year, count(*) as customer_trip_count from `bigquery-public-data.san_francisco_bikeshare.bikeshare_trips` where  (subscriber_type = "Customer" and (Extract(week from start_date) = 35 and Extract(dayofweek from start_date) = 3) ) and ( (Extract(hour from start_date) > 6 and Extract(hour from start_date) < 10) or (Extract(hour from start_date) > 15 and Extract(hour from start_date) < 19)) group by subscriber_type, trip_year order by trip_year desc
+select subscriber_type, Extract(year from start_date) as trip_year, count(*) as customer_trip_count 
+from `bigquery-public-data.san_francisco_bikeshare.bikeshare_trips` 
+where  (subscriber_type = "Customer" and (Extract(week from start_date) = 35 
+and Extract(dayofweek from start_date) = 3) ) and 
+( (Extract(hour from start_date) > 6 and Extract(hour from start_date) < 10) or 
+(Extract(hour from start_date) > 15 and Extract(hour from start_date) < 19)) 
+group by subscriber_type, trip_year order by trip_year desc
 ```
 
 
@@ -118,8 +125,10 @@ select subscriber_type, Extract(year from start_date) as trip_year, count(*) as 
   * SQL query:
   
 ```
-select EXTRACT(YEAR FROM start_date) as year, count(*) as weekend_trips  from `bigquery-public-data.san_francisco_bikeshare.bikeshare_trips` where Extract(DAYOFWEEK FROM start_date) = 1 or Extract(DAYOFWEEK FROM start_date) = 7 group by year order by year desc
-
+select EXTRACT(YEAR FROM start_date) as year, count(*) as weekend_trips  
+from `bigquery-public-data.san_francisco_bikeshare.bikeshare_trips` 
+where Extract(DAYOFWEEK FROM start_date) = 1 or Extract(DAYOFWEEK FROM start_date) = 7 
+group by year order by year desc
 ```
 
 
