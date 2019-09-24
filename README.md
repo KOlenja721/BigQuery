@@ -78,6 +78,7 @@ FROM `bigquery-public-data.san_francisco.bikeshare_trips`
 
 - How many bikes are there?
 Answer: There are 700 bikes
+
 Query:
 
 ```sql
