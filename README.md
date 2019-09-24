@@ -119,16 +119,7 @@ select subscriber_type, Extract(year from start_date) as trip_year, count(*) as 
   
 ```
 select EXTRACT(YEAR FROM start_date) as year, count(*) as weekend_trips  from `bigquery-public-data.san_francisco_bikeshare.bikeshare_trips` where Extract(DAYOFWEEK FROM start_date) = 1 or Extract(DAYOFWEEK FROM start_date) = 7 group by year order by year desc
-+------+---------------+
-| year | weekend_trips |
-+------+---------------+
-| 2018 |         77602 |
-| 2017 |         96265 |
-| 2016 |         19359 |
-| 2015 |         34209 |
-| 2014 |         40309 |
-| 2013 |         17777 |
-+------+---------------+
+
 ```
 
 
