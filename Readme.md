@@ -34,10 +34,8 @@ docker-compose exec kafka kafka-topics --describe --topic assessments --zookeepe
 Use kafkacat to produce test messages to the assessments topic
 ````
 docker-compose exec mids bash -c "cat /w205/project-2-anand-eyunni/assessment-attempts-20180128-121051-nested.json | jq '.[]' -c | kafkacat -P -b kafka:29092 -t assessments"
-````
 
 
-````
 docker-compose exec mids bash -c "kafkacat -C -b kafka:29092 -t assessments -o beginning -e"
 ````
 
@@ -46,6 +44,7 @@ spin up pyspark process using the spark container
 docker-compose exec spark pyspark
 ````
 
+Import json libraries
 ````
 import json
 ````
@@ -76,7 +75,7 @@ assessments.write.parquet("/tmp/assessments")
 ````
 
 
-Chec the result in hadoop
+Check the result in hadoop
 ````
 docker-compose exec cloudera hadoop fs -ls /tmp/
 
@@ -123,7 +122,7 @@ Create a spark TempTable/view
 extracted_assessments.registerTempTable('assessments')
 ````
 
-Create data frames and answer our three questions:
+Create data frames and answer our four questions:
 
 1. What are all the different types of assessments?
 2. How many distinct assessments are available?
@@ -153,4 +152,7 @@ exit()
 docker-compose down
 ````
 
+For commands,
+````
 history | grep -i assessments
+````
