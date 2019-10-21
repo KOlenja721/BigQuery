@@ -132,7 +132,7 @@ Create data frames and answer our four questions:
 ````
 spark.sql("select distinct(exam_name) from assessments").show(100)
 ````
-
+````
 |Example Exam For ...|
 |Building Web Serv...|
 |Cloud Native Arch...|
@@ -196,7 +196,7 @@ spark.sql("select distinct(exam_name) from assessments").show(100)
 |Expert Data Wrang...|
 |Beginning Program...|
 +--------------------+
-
+````
 ````
 spark.sql("select count(distinct(exam_name)) from assessments").show(100)
 ````
