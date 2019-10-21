@@ -1,10 +1,17 @@
+
 ````
 cd ~/w205/project-2-anand-eyunni
 ````
 
+Download json data for assessments
+````
 curl -L -o assessment-attempts-20180128-121051-nested.json https://goo.gl/ME6hjp
+````
 
+Copy docker configuration yml file from the course directory
+````
 cp ~/w205/course-content/08-Querying-Data/docker-compose.yml .
+````
 
 docker-compose up -d
 
